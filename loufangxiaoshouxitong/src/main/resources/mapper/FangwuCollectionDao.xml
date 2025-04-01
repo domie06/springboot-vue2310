@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.FangwuCollectionDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.fangwu_id as fangwuId
+        ,a.kehu_id as kehuId
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.FangwuCollectionView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+        ,fangwu.fangwu_name as fangwuName
+        ,fangwu.fangwu_huxing_types as fangwuHuxingTypes
+        ,fangwu.fangwu_weizhi as fangwuWeizhi
+        ,fangwu.fangwu_tedian as fangwuTedian
+        ,fangwu.fangwu_time as fangwuTime
+        ,fangwu.fangwu_photo as fangwuPhoto
+        ,fangwu.fangwu_new_money as fangwuNewMoney
+        ,fangwu.fangwu_pingmi as fangwuPingmi
+        ,fangwu.fangwu_number as fangwuNumber
+        ,fangwu.fangwu_content as fangwuContent
+        ,kehu.kehu_name as kehuName
+        ,kehu.kehu_phone as kehuPhone
+        ,kehu.kehu_id_number as kehuIdNumber
+        ,kehu.kehu_photo as kehuPhoto
+        ,kehu.sex_types as sexTypes
+
+        FROM fangwu_collection  a
+        left JOIN fangwu fangwu ON a.fangwu_id = fangwu.id
+        left JOIN kehu kehu ON a.kehu_id = kehu.id
+
+        <where>
+            <if test="params.fangwuId != null">
+                and a.fangwu_id = #{params.fangwuId}
+            </if>
+            <if test="params.kehuId != null">
+                and a.kehu_id = #{params.kehuId}
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+            <if test=" params.fangwuName != '' and params.fangwuName != null and params.fangwuName != 'null' ">
+                and fangwu.fangwu_name like CONCAT('%',#{params.fangwuName},'%')
+            </if>
+            <if test="params.fangwuHuxingTypes != null">
+                and fangwu.fangwu_huxing_types = #{params.fangwuHuxingTypes}
+            </if>
+
+            <if test=" params.fangwuWeizhi != '' and params.fangwuWeizhi != null and params.fangwuWeizhi != 'null' ">
+                and fangwu.fangwu_weizhi like CONCAT('%',#{params.fangwuWeizhi},'%')
+            </if>
+            <if test=" params.fangwuTedian != '' and params.fangwuTedian != null and params.fangwuTedian != 'null' ">
+                and fangwu.fangwu_tedian like CONCAT('%',#{params.fangwuTedian},'%')
+            </if>
+            <if test=" params.fangwuTimeStart != '' and params.fangwuTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(fangwu.fangwu_time) >= UNIX_TIMESTAMP(#{params.fangwuTimeStart}) ]]>
+            </if>
+            <if test=" params.fangwuTimeEnd != '' and params.fangwuTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(fangwu.fangwu_time) <= UNIX_TIMESTAMP(#{params.fangwuTimeEnd}) ]]>
+            </if>
+            <if test="params.fangwuNewMoneyStart != null ">
+                <![CDATA[  and fangwu.fangwu_new_money >= #{params.fangwuNewMoneyStart}   ]]>
+            </if>
+            <if test="params.fangwuNewMoneyEnd != null ">
+                <![CDATA[  and fangwu.fangwu_new_money <= #{params.fangwuNewMoneyEnd}   ]]>
+            </if>
+            <if test="params.fangwuPingmiStart != null ">
+                <![CDATA[  and fangwu.fangwu_pingmi >= #{params.fangwuPingmiStart}   ]]>
+            </if>
+            <if test="params.fangwuPingmiEnd != null ">
+                <![CDATA[  and fangwu.fangwu_pingmi <= #{params.fangwuPingmiEnd}   ]]>
+            </if>
+            <if test="params.fangwuNumberStart != null ">
+                <![CDATA[  and fangwu.fangwu_number >= #{params.fangwuNumberStart}   ]]>
+            </if>
+            <if test="params.fangwuNumberEnd != null ">
+                <![CDATA[  and fangwu.fangwu_number <= #{params.fangwuNumberEnd}   ]]>
+            </if>
+            <if test=" params.fangwuContent != '' and params.fangwuContent != null and params.fangwuContent != 'null' ">
+                and fangwu.fangwu_content like CONCAT('%',#{params.fangwuContent},'%')
+            </if>
+            <if test=" params.kehuName != '' and params.kehuName != null and params.kehuName != 'null' ">
+                and kehu.kehu_name like CONCAT('%',#{params.kehuName},'%')
+            </if>
+            <if test=" params.kehuPhone != '' and params.kehuPhone != null and params.kehuPhone != 'null' ">
+                and kehu.kehu_phone like CONCAT('%',#{params.kehuPhone},'%')
+            </if>
+            <if test=" params.kehuIdNumber != '' and params.kehuIdNumber != null and params.kehuIdNumber != 'null' ">
+                and kehu.kehu_id_number like CONCAT('%',#{params.kehuIdNumber},'%')
+            </if>
+            <if test="params.sexTypes != null">
+                and kehu.sex_types = #{params.sexTypes}
+            </if>
+
+        </where>
+        order by a.${params.orderBy} desc
+    </select>
+
+</mapper>
